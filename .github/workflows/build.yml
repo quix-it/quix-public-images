@@ -2,14 +2,18 @@ name: Build
 
 on:
   push:
+  schedule:
+    - cron: '55 22 * * *'
+  workflow_dispatch:
 
 jobs:
 
-  find-changes:
+  list-images:
+
     runs-on: ubuntu-latest
     outputs:
-      build: ${{ steps.changes.outputs.build }}
-      matrix: ${{ steps.changes.outputs.matrix }}
+      build: ${{ steps.list.outputs.build }}
+      matrix: ${{ steps.list.outputs.matrix }}
     steps:
 
       - name: Deep checkout
@@ -17,19 +21,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Find changes
-        id: changes
+      - name: List images
+        id: list
         run: |
-          matrix=$(git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.event.after }} | grep -E '^images/' | xargs -r -n1 -d'\n' dirname | sort -u | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
+          if [ "${{ github.event_name }}" == "push" ]; then
+            matrix=$(git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.event.after }} | grep -E '^images/' | xargs -r -n1 -d'\n' dirname | sort -u | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
+          else
+            matrix=$(find images -type d -mindepth 2 | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
+          fi
           echo "::set-output name=matrix::$matrix"
           echo "::set-output name=build::$(jq '.include|length>0' <<<$matrix)"
 
   build:
-    if: ${{ needs.find-changes.outputs.build == 'true' }}
+    if: ${{ needs.list-images.outputs.build == 'true' }}
     runs-on: ubuntu-latest
-    needs: [ find-changes ]
+    needs: [ list-images ]
     strategy:
-      matrix: ${{ fromJSON(needs.find-changes.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.list-images.outputs.matrix) }}
 
     steps:
       - name: Get image name and tag
@@ -40,7 +48,7 @@ jobs:
           echo "::set-output name=IMAGE::$(basename $(dirname ${{ matrix.path }}))"
           echo "::set-output name=TAG::$(basename ${{ matrix.path }})"
           echo "::set-output name=PATH::${{ matrix.path }}"
-          echo "::set-output name=TAG_SUFFIX::$( [ "$ref" != "${{ github.event.repository.default_branch }}" ] && echo ".${ref//\//-}" || true)"
+          echo "::set-output name=TAG_SUFFIX::$( [[ $ref =~ ^(refs/heads/)?${{ github.event.repository.default_branch }}$ ]] && echo ".${ref//\//-}" || true)"
       
       - name: Shallow checkout
         uses: actions/checkout@v2
