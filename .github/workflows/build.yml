@@ -2,6 +2,9 @@ name: Build
 
 on:
   push:
+    branches:
+      - main
+      - develop
   schedule:
     - cron: '55 22 * * *'
   workflow_dispatch:
