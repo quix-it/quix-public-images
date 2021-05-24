@@ -27,10 +27,11 @@ jobs:
       - name: List images
         id: list
         run: |
+          sha_prev=$(git rev-parse HEAD~1)
           if [ "${{ github.event_name }}" == "push" ]; then
-            matrix=$(git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.event.after }} | grep -E '^images/' | xargs -r -n1 -d'\n' dirname | sort -u | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
+            matrix=$(git diff --name-only --diff-filter=d $sha_prev ${{ github.sha }} | grep -Eo '^images(/[^/]+){3}' | xargs -r -n1 -d'\n' dirname | sort -u | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
           else
-            matrix=$(find images -type d -mindepth 2 | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
+            matrix=$(find images -type d -mindepth 2 -maxdepth 2 | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
           fi
           echo "::set-output name=matrix::$matrix"
           echo "::set-output name=build::$(jq '.include|length>0' <<<$matrix)"
