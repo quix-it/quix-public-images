@@ -1,7 +1,7 @@
 FROM tomcat:9-jdk11
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends dos2unix zip
+    && apt-get install -y --no-install-recommends dos2unix zip gettext
 
 # Remove default web applications
 RUN rm -rf /usr/local/tomcat/webapps/ROOT/admin \
@@ -20,19 +20,20 @@ RUN cd $(mktemp -d) \
     && zip -ur /usr/local/tomcat/lib/catalina.jar * \
     && cd - >/dev/null \
     && rm -rf $OLDPWD
-    # && jar -uMf /usr/local/tomcat/lib/catalina.jar * \
 
 # Turn off session façade recycling & Do not allow additional path delimiters"
 RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.catalina.connector.RECYCLE_FACADES=true\"" >>/usr/local/tomcat/bin/setenv.sh \
     && echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=false\"" >>/usr/local/tomcat/bin/setenv.sh \
     && echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false\"" >>/usr/local/tomcat/bin/setenv.sh
 
+RUN mkdir -p /usr/local/tomcat/conf/custom_resources /usr/local/tomcat/conf/custom_contexts
+
 # Modify default configuration
-COPY files/server.template.xml files/context.xml files/logging.properties /usr/local/tomcat/conf/
+COPY files/server.xml files/context.xml files/logging.properties /usr/local/tomcat/conf/
 COPY files/catalina.sh /usr/local/tomcat/bin/
 
 # Copy additional resources and contexts
-COPY files/resources.xml files/application-contexts.xml /usr/local/tomcat/conf/
+# COPY files/resources.xml files/application-contexts.xml /usr/local/tomcat/conf/
 
 # Remove carriage returns from configuration files
 RUN find "/usr/local/tomcat/conf" -type f -exec dos2unix -k {} \;
