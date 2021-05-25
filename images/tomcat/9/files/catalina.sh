@@ -110,13 +110,15 @@
 #                   case the default is "true"
 # -----------------------------------------------------------------------------
 
-# Custom resources and contexts defined in resources.xml and application-contexts.xml files
-sed -e "/RESOURCES_STOP/a ___tmpMark___" -e "/RESOURCES_START/,/RESOURCES_STOP/d" \
-  < /usr/local/tomcat/conf/server.template.xml \
-  | sed -e "/___tmpMark___/r /usr/local/tomcat/conf/resources.xml" -e '/___tmpMark___/d' \
-  | sed -e "/CONTEXTS_STOP/a ___tmpMark___" -e "/CONTEXTS_START/,/CONTEXTS_STOP/d" \
-  | sed -e "/___tmpMark___/r /usr/local/tomcat/conf/application-contexts.xml" -e '/___tmpMark___/d' \
-  > /usr/local/tomcat/conf/server.xml
+defined_envs=$(printf '${%s} ' $(env | cut -d= -f1))
+
+resources=$(mktemp)
+find /usr/local/tomcat/conf/custom_resources -type f -print0 | xargs -r -n1 -0 cat | envsubst "$defined_envs" >$resources
+sed -i -e "/<!-- CUSTOM_RESOURCES -->/r $resources" -e "/<!-- CUSTOM_RESOURCES -->/d" /usr/local/tomcat/conf/server.xml
+
+contexts=$(mktemp)
+find /usr/local/tomcat/conf/custom_contexts -type f -print0 | xargs -r -n1 -0 cat | envsubst "$defined_envs" >$contexts
+sed -i -e "/<!-- CUSTOM_CONTEXTS -->/r $contexts" -e "/<!-- CUSTOM_CONTEXTS -->/d" /usr/local/tomcat/conf/server.xml
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false

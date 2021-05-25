@@ -40,8 +40,7 @@
 		  
     -->
 
-    <!-- RESOURCES_START -->
-    <!-- RESOURCES_STOP -->
+    <!-- CUSTOM_RESOURCES -->
 
   </GlobalNamingResources>
 
@@ -166,8 +165,7 @@
                prefix="localhost_access_log" suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
-        <!-- CONTEXTS_START -->
-        <!-- CONTEXTS_STOP -->
+        <!-- CUSTOM_CONTEXTS -->
 
       </Host>
     </Engine>
