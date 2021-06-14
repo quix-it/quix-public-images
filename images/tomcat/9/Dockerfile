@@ -26,14 +26,11 @@ RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.catalina.connector.RECYCLE_FACADE
     && echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=false\"" >>/usr/local/tomcat/bin/setenv.sh \
     && echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false\"" >>/usr/local/tomcat/bin/setenv.sh
 
-RUN mkdir -p /usr/local/tomcat/conf/custom_resources /usr/local/tomcat/conf/custom_contexts
+RUN mkdir -p /usr/local/tomcat/conf/Catalina/localhost /usr/local/tomcat/conf/Catalina/templates /usr/local/tomcat/conf/custom_resources /usr/local/tomcat/conf/custom_contexts
 
 # Modify default configuration
 COPY files/server.xml files/context.xml files/logging.properties /usr/local/tomcat/conf/
 COPY files/catalina.sh /usr/local/tomcat/bin/
-
-# Copy additional resources and contexts
-# COPY files/resources.xml files/application-contexts.xml /usr/local/tomcat/conf/
 
 # Remove carriage returns from configuration files
 RUN find "/usr/local/tomcat/conf" -type f -exec dos2unix -k {} \;
