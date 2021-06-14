@@ -32,6 +32,10 @@ RUN mkdir -p /usr/local/tomcat/conf/Catalina/localhost /usr/local/tomcat/conf/Ca
 COPY files/server.xml files/context.xml files/logging.properties /usr/local/tomcat/conf/
 COPY files/catalina.sh /usr/local/tomcat/bin/
 
+RUN cd /usr/local/tomcat/lib && \
+    curl -sL -O https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.21/postgresql-42.2.21.jar && \
+    curl -sL -O https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.25/mysql-connector-java-8.0.25.jar
+
 # Remove carriage returns from configuration files
 RUN find "/usr/local/tomcat/conf" -type f -exec dos2unix -k {} \;
 
