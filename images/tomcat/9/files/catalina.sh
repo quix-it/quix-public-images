@@ -120,6 +120,11 @@ contexts=$(mktemp)
 find /usr/local/tomcat/conf/custom_contexts -type f -print0 | xargs -r -n1 -0 cat | envsubst "$defined_envs" >$contexts
 sed -i -e "/<!-- CUSTOM_CONTEXTS -->/r $contexts" -e "/<!-- CUSTOM_CONTEXTS -->/d" /usr/local/tomcat/conf/server.xml
 
+# replace environment variables in Catalina templates
+cd /usr/local/tomcat/conf/Catalina-templates
+find . -type f -name "*.tpl" | while read f; do mkdir -p /usr/local/tomcat/conf/Catalina/$(dirname $f); envsubst "$defined_envs" < $f > /usr/local/tomcat/conf/Catalina/$(dirname $f)/$(basename $f .tpl); done
+cd -
+
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false
 darwin=false

@@ -26,7 +26,7 @@ RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.catalina.connector.RECYCLE_FACADE
     && echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=false\"" >>/usr/local/tomcat/bin/setenv.sh \
     && echo "JAVA_OPTS=\"\$JAVA_OPTS -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=false\"" >>/usr/local/tomcat/bin/setenv.sh
 
-RUN mkdir -p /usr/local/tomcat/conf/custom_resources /usr/local/tomcat/conf/custom_contexts
+RUN mkdir -p /usr/local/tomcat/conf/Catalina /usr/local/tomcat/conf/Catalina-templates /usr/local/tomcat/conf/custom_resources /usr/local/tomcat/conf/custom_contexts
 
 # Modify default configuration
 COPY files/server.xml files/context.xml files/logging.properties /usr/local/tomcat/conf/
