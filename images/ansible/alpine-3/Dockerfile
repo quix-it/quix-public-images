@@ -1,4 +1,4 @@
-FROM alpine:3
+FROM alpine:3.13
 
 RUN apk update && \
     apk add openssh-client ansible ansible-lint jq python3 py3-pip
