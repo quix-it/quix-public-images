@@ -14,6 +14,6 @@ WORKDIR $WORKDIR
 
 RUN rm -rf ..?* .[!.]* *
 
-USER git
+# USER git
 
 ENTRYPOINT [ "/bin/sh" ]

@@ -12,7 +12,7 @@ RUN npm update && \
 WORKDIR $WORKDIR
 RUN chmod 777 .
 
-RUN groupmod -g 1001 node && usermod -u 1001 node
-USER node
+# RUN groupmod -g 1001 node && usermod -u 1001 node
+# USER node
 
 ENTRYPOINT [ "/bin/bash" ]
