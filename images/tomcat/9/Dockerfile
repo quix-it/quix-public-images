@@ -1,7 +1,7 @@
 FROM tomcat:9-jdk11
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends dos2unix zip gettext
+    && apt-get install -y --no-install-recommends dos2unix zip gettext less
 
 # Remove default web applications
 RUN rm -rf /usr/local/tomcat/webapps/ROOT/admin \
