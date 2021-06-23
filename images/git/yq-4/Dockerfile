@@ -4,7 +4,7 @@ FROM alpine/git:latest
 COPY --from=0 /usr/bin/yq /usr/bin/
 
 RUN apk update &&\
-    apk add --no-cache gettext
+    apk add --no-cache gettext jq curl
 
 ENV WORKDIR=/workdir
 
