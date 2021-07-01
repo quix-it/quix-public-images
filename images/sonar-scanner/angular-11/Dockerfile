@@ -15,8 +15,6 @@ RUN apk update &&\
     apk add gettext
 
 RUN npm update && \
-    npm install -g npm
-RUN npm update && \
     npm install -g @angular/cli@11.1.0 @angular-devkit/build-angular
 
 RUN rm -rf ..?* .[!.]* *
