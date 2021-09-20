@@ -5,9 +5,11 @@ RUN apk update && \
 RUN ansible-galaxy collection install community.docker community.general community.crypto
 RUN pip3 install yq
 
+RUN apk add bash
+
 # RUN adduser -D -h /home/ansible -u 1001 ansible
 # USER ansible
 
 WORKDIR /src
 
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["/bin/bash"]
