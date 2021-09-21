@@ -2,14 +2,13 @@ FROM alpine:3.13
 
 RUN apk update && \
     apk add openssh-client ansible ansible-lint jq python3 py3-pip
-RUN ansible-galaxy collection install community.docker community.general community.crypto
+RUN ansible-galaxy collection install community.docker community.general community.crypto ansible.posix
 RUN pip3 install yq
 
-RUN apk add bash
+RUN apk add bash rsync
 
-# RUN adduser -D -h /home/ansible -u 1001 ansible
-# USER ansible
+WORKDIR /workdir
 
-WORKDIR /src
+ENV PS1='\u@\h:\w\$ '
 
 ENTRYPOINT ["/bin/bash"]
