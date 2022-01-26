@@ -1,5 +1,9 @@
+FROM sonarsource/sonar-scanner-cli:4
 FROM node:14
 
+COPY --from=0 /opt/sonar-scanner /opt/sonar-scanner
+
+ENV PATH=$PATH:/opt/sonar-scanner/bin
 ENV NG_CLI_ANALYTICS=ci
 ENV WORKDIR=/workspace
 
