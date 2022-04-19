@@ -20,6 +20,6 @@ RUN npm update && \
 
 RUN rm -rf ..?* .[!.]* *
 
-# USER node
+# USER node 
 
 ENTRYPOINT [ "/bin/bash" ]
