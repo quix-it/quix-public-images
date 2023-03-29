@@ -33,8 +33,8 @@ jobs:
           else
             matrix=$(find images -type d -mindepth 2 -maxdepth 2 | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
           fi
-          echo "::set-output name=matrix::$matrix"
-          echo "::set-output name=build::$(jq '.include|length>0' <<<$matrix)"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "build=$(jq '.include|length>0' <<<$matrix)" >> $GITHUB_OUTPUT
 
   build:
     if: ${{ needs.list-images.outputs.build == 'true' }}
@@ -49,10 +49,10 @@ jobs:
         run: |
           ref=${{ github.ref }}
           ref=${ref#refs/heads/}
-          echo "::set-output name=IMAGE::$(basename $(dirname ${{ matrix.path }}))"
-          echo "::set-output name=TAG::$(basename ${{ matrix.path }})"
-          echo "::set-output name=PATH::${{ matrix.path }}"
-          echo "::set-output name=TAG_SUFFIX::$( [[ $ref =~ ^(refs/heads/)?main$ ]] || echo .${ref//\//-})"
+          echo "IMAGE=$(basename $(dirname ${{ matrix.path }}))" >> $GITHUB_OUTPUT
+          echo "TAG=$(basename ${{ matrix.path }})" >> $GITHUB_OUTPUT
+          echo "PATH=${{ matrix.path }}" >> $GITHUB_OUTPUT
+          echo "TAG_SUFFIX=$( [[ $ref =~ ^(refs/heads/)?main$ ]] || echo .${ref//\//-})" >> $GITHUB_OUTPUT
       
       - name: Shallow checkout
         uses: actions/checkout@v2
