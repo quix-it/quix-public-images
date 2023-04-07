@@ -11,11 +11,6 @@ I.e. in order to build the `angular:11` image I need to have its `Dockerfile` in
 ```
 /
 ┗━━━images
-    ┣━━━angular
-    ┃   ┣━━━9
-    ┃   ┃   ┣━━━Dockerfile
-    ┃   ┗━━━11
-    ┃       ┣━━━Dockerfile
     ┣━━━nginx
     ┃   ┗━━━1.20
     ┃       ┣━━━Dockerfile
