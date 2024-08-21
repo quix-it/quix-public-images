@@ -2,7 +2,7 @@ FROM sonarsource/sonar-scanner-cli:4
 FROM maven:3.8-openjdk-17
 
 RUN mkdir -p /repo $MAVEN_CONFIG && \
-    yum install -y gettext git jq
+    apt-get update && apt-get install -y gettext git jq
 
 COPY --from=0 /opt/sonar-scanner /opt/sonar-scanner
 
