@@ -1,8 +1,10 @@
 FROM sonarsource/sonar-scanner-cli:4
 FROM maven:3.8-openjdk-17
 
+RUN microdnf install yum 
+
 RUN mkdir -p /repo $MAVEN_CONFIG && \
-    dnf install -y gettext git jq
+    yum install -y gettext git jq
 
 COPY --from=0 /opt/sonar-scanner /opt/sonar-scanner
 
