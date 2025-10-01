@@ -1,0 +1,46 @@
+name: Build Maven
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #    - develop
+  #schedule:
+  #  - cron: '55 22 * * 0'
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "Lista delle immagini da buildare (es: 3.6-openjdk-11,3.6-openjdk-8,3.8-openjdk-17)"
+        required: true
+        default: "3.6-openjdk-11,3.6-openjdk-8,3.8-openjdk-11,3.8-openjdk-17,3.9-eclipse-temurin-21,3.9-eclipse-temurin-25"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path: ${{ fromJSON(format('["{0}"]', replace(github.event.inputs.images, ',', '","'))) }}
+
+    steps:      
+      - name: Shallow checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v4
+        with:
+          context: images/maven/${{ matrix.path }}
+          file: images/maven/${{ matrix.path }}/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/maven:${{ matrix.path }}
