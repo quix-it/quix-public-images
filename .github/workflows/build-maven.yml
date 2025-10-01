@@ -12,14 +12,14 @@ on:
       images:
         description: "Lista delle immagini da buildare"
         required: true
-        default: "3.6-openjdk-11,3.6-openjdk-8,3.8-openjdk-11,3.8-openjdk-17,3.9-eclipse-temurin-21,3.9-eclipse-temurin-25"
+        default: '["3.6-openjdk-11","3.6-openjdk-8","3.8-openjdk-11","3.8-openjdk-17","3.9-eclipse-temurin-21","3.9-eclipse-temurin-25"]'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        path: ${{ fromJSON(format('["{0}"]', replace(github.event.inputs.images, ',', '","'))) }}
+        path: ${{ fromJSON(github.event.inputs.images) }}
 
     steps:      
       - name: Shallow checkout
