@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       images:
-        description: "Lista delle immagini da buildare (es: 3.6-openjdk-11,3.6-openjdk-8,3.8-openjdk-17)"
+        description: "Lista delle immagini da buildare"
         required: true
         default: "3.6-openjdk-11,3.6-openjdk-8,3.8-openjdk-11,3.8-openjdk-17,3.9-eclipse-temurin-21,3.9-eclipse-temurin-25"
 
