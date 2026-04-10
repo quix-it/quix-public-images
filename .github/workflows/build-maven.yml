@@ -38,7 +38,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_READWRITE_TOKEN }}
 
       - name: Build & Push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v1
         with:
           context: images/maven/${{ matrix.path }}
           file: images/maven/${{ matrix.path }}/Dockerfile
