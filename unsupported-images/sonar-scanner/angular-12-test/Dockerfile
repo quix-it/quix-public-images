@@ -1,5 +1,6 @@
 FROM node:14
-FROM sonarsource/sonar-scanner-cli:latest
+# sonar-scanner-cli 12.2.0.4256_8.1.0
+FROM sonarsource/sonar-scanner-cli@sha256:a3f4215076706c95a17a68c19322ee916e40a3acd081a8c1a1e839e0194afa57
 
 ENV NG_CLI_ANALYTICS=ci
 ENV WORKDIR=/workdir
