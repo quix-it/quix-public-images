@@ -8,6 +8,11 @@ on:
   #schedule:
   #  - cron: '55 22 * * 0'
   workflow_dispatch:
+    inputs:
+      path:
+        description: 'Optional: only build subdirectories of this path (e.g. unsupported-images/sonar-scanner). Leave empty to build every image under unsupported-images/.'
+        required: false
+        type: string
 
 jobs:
 
@@ -30,6 +35,8 @@ jobs:
           sha_prev=$(git rev-parse HEAD~1)
           if [ "${{ github.event_name }}" == "push" ]; then
             matrix=$(git diff --name-only --diff-filter=d $sha_prev ${{ github.sha }} | grep -Eo '^unsupported-images(/[^/]+){3}' | xargs -r -n1 -d'\n' dirname | sort -u | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
+          elif [ -n "${{ inputs.path }}" ]; then
+            matrix=$(find "${{ inputs.path }}" -type d -mindepth 1 -maxdepth 1 | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
           else
             matrix=$(find unsupported-images -type d -mindepth 2 -maxdepth 2 | jq -R -s -c 'split("\n")|map(select(.|length>0))|{"include":map({"path":.})}')
           fi
@@ -41,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ list-images ]
     strategy:
+      fail-fast: false
       matrix: ${{ fromJSON(needs.list-images.outputs.matrix) }}
 
     steps:
