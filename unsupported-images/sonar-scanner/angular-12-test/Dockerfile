@@ -13,7 +13,7 @@ RUN useradd -m -d $WORKDIR -u 1001 node
 
 WORKDIR $WORKDIR
 
-RUN dnf install -y gettext jq tar && dnf clean all
+RUN dnf install -y gettext jq tar findutils && dnf clean all
 
 RUN npm update && \
     npm install -g @angular/cli@12.1.0 @angular-devkit/build-angular
