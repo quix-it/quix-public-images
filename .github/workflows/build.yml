@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ list-images ]
     strategy:
+      fail-fast: false
       matrix: ${{ fromJSON(needs.list-images.outputs.matrix) }}
 
     steps:
