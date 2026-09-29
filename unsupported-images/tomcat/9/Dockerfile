@@ -31,6 +31,7 @@ RUN mkdir -p /usr/local/tomcat/conf/Catalina/localhost /usr/local/tomcat/conf/Ca
 # Modify default configuration
 COPY files/server.xml files/context.xml files/logging.properties /usr/local/tomcat/conf/
 COPY files/catalina.sh /usr/local/tomcat/bin/
+RUN chmod +x /usr/local/tomcat/bin/catalina.sh
 
 RUN cd /usr/local/tomcat/lib && \
     curl -sL -O https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.21/postgresql-42.2.21.jar && \
