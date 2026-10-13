@@ -37,6 +37,33 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_READWRITE_TOKEN }}
 
+      - name: Build image (local, no push)
+        uses: docker/build-push-action@v4
+        with:
+          context: images/maven/${{ matrix.path }}
+          file: images/maven/${{ matrix.path }}/Dockerfile
+          push: false
+          load: true
+          tags: smoke-test:${{ github.run_id }}
+
+      - name: Smoke test - image starts without exec errors
+        run: |
+          cid=$(docker run -d smoke-test:${{ github.run_id }})
+          sleep 8
+          status=$(docker inspect -f '{{.State.Status}}' "$cid")
+          exit_code=$(docker inspect -f '{{.State.ExitCode}}' "$cid")
+          if [ "$status" = "running" ]; then
+            echo "OK: il container è avviato e resta in esecuzione (immagine tipo servizio)."
+          elif [ "$exit_code" = "126" ] || [ "$exit_code" = "127" ]; then
+            echo "::error::Il comando di avvio non è eseguibile (exit $exit_code):"
+            docker logs "$cid"
+            docker rm -f "$cid" >/dev/null
+            exit 1
+          else
+            echo "OK: il container è terminato da solo con exit code $exit_code (immagine tipo tool)."
+          fi
+          docker rm -f "$cid" >/dev/null 2>&1 || true
+
       - name: Build & Push
         uses: docker/build-push-action@v4
         with:
